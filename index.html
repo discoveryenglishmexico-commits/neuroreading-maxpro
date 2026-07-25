@@ -5,20 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DALPA Tomo I - MAX Neuroeducation</title>
     
-    <!-- Google Fonts -->
+    <!-- Fuentes de Google -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS (CDN) -->
+    <!-- Tailwind CSS (Diseño visual) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Configuración de colores personalizados de Tailwind -->
+    <!-- Chart.js (Para las gráficas) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Configuración de colores personalizados -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         dalpaBg: '#0B0F19',
                         dalpaCard: '#1E293B',
@@ -31,7 +32,7 @@
     </script>
 
     <style>
-        /* Transiciones suaves para la SPA */
+        /* Transiciones visuales suaves */
         .fade-enter {
             opacity: 0;
             transform: translateY(10px);
@@ -48,22 +49,18 @@
 </head>
 <body class="bg-dalpaBg text-gray-200 font-sans h-screen flex overflow-hidden">
 
-    <!-- Menú Lateral (Sidebar) -->
+    <!-- MENÚ LATERAL -->
     <aside id="sidebar" class="bg-dalpaCard w-72 flex-shrink-0 flex flex-col h-full absolute md:relative z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out border-r border-gray-700">
-        
-        <!-- Header del Menú -->
         <div class="p-6 border-b border-gray-700 flex justify-between items-center">
             <div>
                 <h1 class="text-xl font-bold text-white tracking-wide">MAX <span class="text-dalpaBlue">Neuro</span></h1>
                 <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Discovery - DALPA I</p>
             </div>
-            <!-- Botón cerrar móvil -->
             <button id="closeSidebarBtn" class="md:hidden text-gray-400 hover:text-white">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
 
-        <!-- Progreso General -->
         <div class="p-6 border-b border-gray-700">
             <div class="flex justify-between items-center mb-2">
                 <span class="text-sm font-semibold text-gray-300">Progreso del Curso</span>
@@ -74,7 +71,6 @@
             </div>
         </div>
 
-        <!-- Navegación -->
         <nav class="flex-1 overflow-y-auto py-4">
             <ul class="space-y-1 px-3">
                 <li><button data-target="view-dashboard" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-white bg-dalpaBlue bg-opacity-20 text-dalpaBlue">🏠 Inicio / Dashboard</button></li>
@@ -87,12 +83,10 @@
         </nav>
     </aside>
 
-    <!-- Overlay para móviles -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
 
-    <!-- Contenido Principal -->
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="flex-1 flex flex-col h-full relative overflow-hidden">
-        <!-- Topbar móvil -->
         <header class="md:hidden bg-dalpaCard border-b border-gray-700 p-4 flex justify-between items-center">
             <h2 class="text-lg font-bold text-white">DALPA Tomo I</h2>
             <button id="openSidebarBtn" class="text-gray-400 hover:text-white">
@@ -100,158 +94,252 @@
             </button>
         </header>
 
-        <!-- Contenedor de Vistas (Vistas SPA) -->
         <div class="flex-1 overflow-y-auto p-6 md:p-10" id="mainContainer">
             
-            <!-- Vista: Dashboard -->
+            <!-- Vista: Inicio -->
             <section id="view-dashboard" class="app-view fade-enter fade-enter-active">
                 <h2 class="text-3xl font-bold text-white mb-6">Bienvenido a tu Preparación</h2>
                 <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
-                    <p class="text-gray-400">Aquí diseñaremos el panel principal con el resumen de actividades.</p>
+                    <p class="text-gray-400">Pronto diseñaremos el panel principal aquí.</p>
                 </div>
             </section>
 
             <!-- Vista: Diagnóstico -->
             <section id="view-diagnostico" class="app-view hidden-view fade-enter">
-                <h2 class="text-3xl font-bold text-white mb-6">Diagnóstico Inicial</h2>
-                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
-                    <p class="text-gray-400">Marcador de posición para la Lectura 1 y la evaluación.</p>
+                <div class="flex justify-between items-end mb-6">
+                    <h2 class="text-3xl font-bold text-white">Diagnóstico Inicial</h2>
+                    <button id="showChartBtn" class="text-dalpaBlue hover:text-white text-sm font-semibold transition-colors underline">Ver mi progreso</button>
+                </div>
+                
+                <div class="bg-dalpaCard p-6 md:p-8 rounded-xl border border-gray-700 shadow-lg relative min-h-[400px]">
+                    
+                    <div id="diagnosticSelector" class="flex flex-col items-center justify-center space-y-6 py-10">
+                        <h3 class="text-xl text-gray-300 font-semibold mb-4">Selecciona tu prueba diagnóstica</h3>
+                        <div class="flex flex-col sm:flex-row gap-4 w-full max-w-lg">
+                            <button onclick="iniciarDiagnostico(0)" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-semibold py-4 px-6 rounded-lg border border-gray-600 transition-all shadow-md">
+                                Lectura 1:<br><span class="text-sm font-normal text-dalpaBlue">Sobre la soberbia</span>
+                            </button>
+                            <button onclick="iniciarDiagnostico(1)" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-semibold py-4 px-6 rounded-lg border border-gray-600 transition-all shadow-md">
+                                Lectura 2:<br><span class="text-sm font-normal text-dalpaGreen">México: suma de esfuerzos</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="readingArea" class="hidden flex flex-col items-center">
+                        <h3 id="readingTitle" class="text-2xl font-bold text-dalpaBlue mb-4 text-center"></h3>
+                        <p class="text-gray-400 text-sm mb-6 text-center">Lee el texto a tu velocidad de comprensión normal. El tiempo corre en silencio.</p>
+                        
+                        <div id="readingText" class="text-gray-200 text-lg leading-relaxed text-justify max-w-3xl mb-8 bg-gray-900 p-6 rounded-lg border border-gray-700"></div>
+
+                        <button onclick="finalizarLectura()" class="bg-dalpaBlue hover:bg-blue-600 text-white font-bold py-3 px-10 rounded-full shadow-lg transform hover:scale-105 transition-all text-lg">
+                            He Terminado de Leer
+                        </button>
+                    </div>
+
+                    <div id="quizArea" class="hidden max-w-3xl mx-auto">
+                        <h3 class="text-2xl font-bold text-dalpaGreen mb-2">Evaluación de Comprensión</h3>
+                        <p class="text-gray-400 text-sm mb-6">Responde las siguientes preguntas sin volver a consultar el texto.</p>
+                        <form id="quizForm" class="space-y-8"></form>
+                        <div class="mt-8 flex justify-end">
+                            <button onclick="evaluarQuiz(event)" class="bg-dalpaGreen hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all">
+                                Enviar y Ver Resultados
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="resultsArea" class="hidden max-w-4xl mx-auto flex flex-col items-center w-full">
+                        <h3 class="text-3xl font-bold text-white mb-6">Resultados de tu Diagnóstico</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-8">
+                            <div class="bg-gray-800 p-6 rounded-lg border border-gray-600 text-center shadow-inner">
+                                <p class="text-gray-400 font-semibold mb-2">Velocidad de Lectura</p>
+                                <p id="resultWPM" class="text-5xl font-bold text-dalpaBlue">0 <span class="text-lg text-gray-400">PPM</span></p>
+                            </div>
+                            <div class="bg-gray-800 p-6 rounded-lg border border-gray-600 text-center shadow-inner">
+                                <p class="text-gray-400 font-semibold mb-2">Comprensión</p>
+                                <p id="resultComp" class="text-5xl font-bold text-dalpaGreen">0<span class="text-lg">%</span></p>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-900 p-4 rounded-lg border border-gray-700">
+                            <canvas id="progressChart" height="100"></canvas>
+                        </div>
+                        <button onclick="resetDiagnostico()" class="mt-8 text-gray-400 hover:text-white underline">Volver al selector de lecturas</button>
+                    </div>
                 </div>
             </section>
 
-            <!-- Vista: Módulo 1 -->
-            <section id="view-modulo1" class="app-view hidden-view fade-enter">
-                <h2 class="text-3xl font-bold text-white mb-6">Módulo 1: Gimnasia Ocular Interactiva</h2>
-                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
-                    <p class="text-gray-400">Marcador de posición para los ejercicios de desplazamiento.</p>
-                </div>
-            </section>
-
-            <!-- Vista: Módulo 2 -->
-            <section id="view-modulo2" class="app-view hidden-view fade-enter">
-                <h2 class="text-3xl font-bold text-white mb-6">Módulo 2: Flexores Visuales DALPA</h2>
-                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
-                    <p class="text-gray-400">Marcador de posición para Flexor 1 y 2.</p>
-                </div>
-            </section>
-
-            <!-- Vista: Módulo 3 -->
-            <section id="view-modulo3" class="app-view hidden-view fade-enter">
-                <h2 class="text-3xl font-bold text-white mb-6">Módulo 3: Retos de Atención y Memoria</h2>
-                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
-                    <p class="text-gray-400">Marcador de posición para pensamiento activo.</p>
-                </div>
-            </section>
-
-            <!-- Vista: Perfil -->
-            <section id="view-perfil" class="app-view hidden-view fade-enter">
-                <h2 class="text-3xl font-bold text-white mb-6">Mi Perfil e Historial</h2>
-                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
-                    <p class="text-gray-400">Marcador de posición para las gráficas de progreso en PPM y Comprensión.</p>
-                </div>
-            </section>
-
+            <!-- Vistas en blanco para futuros módulos -->
+            <section id="view-modulo1" class="app-view hidden-view fade-enter"><h2 class="text-3xl font-bold text-white">Próximamente: Módulo 1</h2></section>
+            <section id="view-modulo2" class="app-view hidden-view fade-enter"><h2 class="text-3xl font-bold text-white">Próximamente: Módulo 2</h2></section>
+            <section id="view-modulo3" class="app-view hidden-view fade-enter"><h2 class="text-3xl font-bold text-white">Próximamente: Módulo 3</h2></section>
+            <section id="view-perfil" class="app-view hidden-view fade-enter"><h2 class="text-3xl font-bold text-white">Próximamente: Perfil</h2></section>
         </div>
     </main>
 
-    <!-- Lógica de la Aplicación (JavaScript) -->
+    <!-- PROGRAMACIÓN PRINCIPAL (JAVASCRIPT) -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- 1. Estado de la Aplicación y LocalStorage ---
-            const defaultState = {
-                progress: 0,
-                lastView: 'view-dashboard',
-                diagnostico: null,
-                modulos: { m1: false, m2: false, m3: false }
-            };
+        // 1. Datos y Navegación Básica
+        let appState = JSON.parse(localStorage.getItem('dalpaState')) || { progress: 0, lastView: 'view-dashboard', diagnostico: null };
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const views = document.querySelectorAll('.app-view');
 
-            let appState = JSON.parse(localStorage.getItem('dalpaState')) || defaultState;
+        function switchView(targetId) {
+            views.forEach(view => {
+                view.classList.add('hidden-view');
+                view.classList.remove('fade-enter-active');
+            });
+            const targetView = document.getElementById(targetId);
+            if (targetView) {
+                targetView.classList.remove('hidden-view');
+                setTimeout(() => targetView.classList.add('fade-enter-active'), 10);
+            }
+            navButtons.forEach(btn => {
+                if(btn.dataset.target === targetId) {
+                    btn.classList.remove('text-gray-400', 'hover:bg-gray-800');
+                    btn.classList.add('bg-dalpaBlue', 'bg-opacity-20', 'text-dalpaBlue', 'text-white');
+                } else {
+                    btn.classList.add('text-gray-400', 'hover:bg-gray-800');
+                    btn.classList.remove('bg-dalpaBlue', 'bg-opacity-20', 'text-dalpaBlue', 'text-white');
+                }
+            });
+            appState.lastView = targetId;
+            localStorage.setItem('dalpaState', JSON.stringify(appState));
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.add('hidden');
+        }
 
-            // Función para guardar datos en el navegador
-            function saveState() {
+        navButtons.forEach(btn => btn.addEventListener('click', (e) => switchView(e.currentTarget.dataset.target)));
+        document.getElementById('openSidebarBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.remove('hidden');
+        });
+        document.getElementById('closeSidebarBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.add('hidden');
+        });
+
+        function updateProgressUI() {
+            document.getElementById('progressBar').style.width = appState.progress + '%';
+            document.getElementById('progressText').textContent = appState.progress + '%';
+        }
+
+        // 2. Lógica del Diagnóstico
+        const diagnosticos = [
+            {
+                id: 1, titulo: 'Sobre la soberbia', referencia: 17580,
+                texto: `Sólo odiamos, lo mismo que amamos, lo que en algo, de una o de otra manera, se nos parece; lo absolutamente contrario o en absoluto diferente de nosotros, no nos merece ni amor ni odio, sino indiferencia. Y es que, de ordinario, lo que aborrezco de otros, lo aborrezco por sentido de mí mismo; y si me hiere aquella púa del prójimo, es porque esa misma púa me está hiriendo en mi interior. Es mi envidia, mi soberbia, mi petulancia, mi codicia las que me hacen aborrecer la soberbia, la envidia, la petulancia, la codicia ajena. Y así sucede, que lo mismo que une el amor al amante y al amado, une también el odio al odiador y al odiado, y no los une ni menos fuerte ni menos duradero.<br><br>Hay con frecuencia un sedimento de amor en el fondo de no pocos odios; muchas personas se aborrecen, o creen más bien aborrecerse, porque se respetan, se estiman y hasta se quieren mutuamente, y como dice Enrique David Thoreau: "A nadie tenemos más derecho para odiar que a nuestro amigo".<br><br>A menudo ocurre que se pasa uno la vida combatiendo la intolerancia de los demás, y si logras arrimarte a tu espíritu y registrarlo con tu mirada, verás que estás combatiendo tu propia intolerancia.<br><br>Los absolutamente humildes no se escandalizan ni apenas se conduelen de la soberbia ajena, como los verdaderamente pródigos no se indignan de la avaricia de los demás. No tienen sino que ver las prevenciones que los humildes de profesión han tomado siempre para que su humildad no se convierta en soberbia.<br><br>San Ambrosio dice: "Muchos tienen apariencia de humildad, pero no tienen la virtud de la humildad, muchos que parece exteriormente la buscan, interiormente la contradicen".`,
+                preguntas: [
+                    { q: "1. El odio y el amor son sentimientos:", options: ["a) Equivalentes.", "b) Similares.", "c) Diferentes.", "d) Parecidos.", "e) Antónimos."], ans: 0 },
+                    { q: "2. La envidia se aborrece cuando...", options: ["a) El sujeto la posee y la observa en otro.", "b) Un sujeto la observa en otra persona y cree no poseerla.", "c) Cuando no se es poseedor de todo.", "d) Se es soberbio.", "e) Se es humilde."], ans: 1 },
+                    { q: "3. Al ver los ojos de alguien que no toleramos nos damos cuenta de que...", options: ["a) Lo odiamos.", "b) Está combatiendo su propia intolerancia.", "c) Es vergonzosa su actitud.", "d) Nos dignificamos.", "e) Es hipócrita."], ans: 1 },
+                    { q: "4. Los absolutamente humildes no se indignan por:", options: ["a) La soberbia ajena.", "b) La humildad del prójimo.", "c) La hipocresía de los demás.", "d) La avaricia de los demás.", "e) El comportamiento ajeno."], ans: 3 },
+                    { q: "5. En ocasiones el aborrecer a una persona se confunde con:", options: ["a) El odio.", "b) La admiración.", "c) El respeto.", "d) La soberbia.", "e) El amor."], ans: 3 }
+                ]
+            },
+            {
+                id: 2, titulo: 'México: suma de esfuerzos y heroísmo', referencia: 18180,
+                texto: `Si estuvieran con nosotros quienes vivieron y murieron para que México fuese algo de lo que hoy es; si monárquicos e insurgentes, conservadores y reformistas, liberales y reaccionarios resucitaran, ¿qué mejor consejo podrían proporcionarnos para no vulnerar la unidad ascendente de la Nación? Ellos, que no admitieron en la vida la coexistence de sus entusiasmos dispares y vehementes, no han logrado evitar que los cubra, por encima de los sepulcros, un amor que es respeto para los héroes y magnanimidad y perdón para los que erraron.<br><br>De unos y de otros fluye nuestro presente, mas por amplio que sea el perdón de México unos están ya consagrados como constructores, como descubridores, como civilizadores, como libertadores. Ante sus sombras nos inclinamos con íntima gratitud. Ellos han alcanzado, por fin, el derecho heroico de fraternizar con sus contrincantes y sus rivales. Pero no aceptarían que fuera nuestro recuerdo fosa común y nunca tolerarían que abandonásemos la obra que comenzaron, que su muerte dejó inconclusa y que es la redención general por la libertad, la organización de la libertad en la independencia por la justicia.<br><br>La historia marca una vinculación invisible que ilustra el culto de los muertos, tal como Renán puntualizó: “El hombre, no se improvisa: La Nación, como el individuo, es el resultante de un largo legado de esfuerzos, de sacrificios, de abnegaciones. Tener hazañas comunes en el pasado y en el presente, una voluntad común; haber afrontado en conjunto vastas empresas; querer intentar otras todavía: esas son las condiciones esenciales de todo pueblo.<br><br>En el pasado, una herencia de glorias y de pesares que compartir; en el futuro, un mismo programa que realizar, haber sufrido, gozado, esperado juntos..."`,
+                preguntas: [
+                    { q: "1. Según la lectura, ¿quiénes vivieron y murieron para que México fuese lo que es hoy?", options: ["a) Conservadores.", "b) Monárquicos e insurgentes.", "c) Liberales y reaccionarios.", "d) Insurgentes.", "e) Todos los anteriores."], ans: 4 },
+                    { q: "2. ¿En qué asunto podrían aconsejarnos los que vivieron y murieron por México?", options: ["a) En no vulnerar la unidad ascendente de la Nación.", "b) En pelear por la libertad.", "c) En fomentar la paz.", "d) En promover el desarrollo económico.", "e) En recordar con gratitud sus esfuerzos."], ans: 0 },
+                    { q: "3. ¿Qué obra dejaron inconclusa con su muerte, los personajes de la lectura?", options: ["a) Redención general por la libertad.", "b) La organización de la libertad en la independencia por la justicia.", "c) El robustecimiento de la independencia por la justicia.", "d) B y C.", "e) A y B."], ans: 4 },
+                    { q: "4. La Nación es el resultado de:", options: ["a) Un largo legado de esfuerzos, batallas y luchas.", "b) Un largo legado de esfuerzos, sacrificios y abnegaciones.", "c) Un largo legado de triunfos, derrotas y abnegaciones.", "d) Un largo periodo de lucha y sacrificio.", "e) Un constante preparar generación tras generación."], ans: 1 },
+                    { q: "5. ¿Cuáles son algunas de las condiciones esenciales de todo pueblo?", options: ["a) Economía y salud.", "b) Fomentar la paz.", "c) Tener hazañas comunes en el pasado y en el presente, una voluntad común.", "d) Fomentar la libertad y la independencia.", "e) Ninguna de las anteriores."], ans: 2 }
+                ]
+            }
+        ];
+
+        let lecturaActual = null, tiempoInicio = 0, myChart = null;
+
+        function iniciarDiagnostico(index) {
+            lecturaActual = diagnosticos[index];
+            document.getElementById('diagnosticSelector').classList.add('hidden');
+            document.getElementById('readingArea').classList.remove('hidden');
+            document.getElementById('readingTitle').textContent = lecturaActual.titulo;
+            document.getElementById('readingText').innerHTML = lecturaActual.texto;
+            tiempoInicio = Date.now();
+        }
+
+        function finalizarLectura() {
+            lecturaActual.tiempoSegundos = (Date.now() - tiempoInicio) / 1000;
+            document.getElementById('readingArea').classList.add('hidden');
+            document.getElementById('quizArea').classList.remove('hidden');
+            
+            const form = document.getElementById('quizForm');
+            form.innerHTML = '';
+            lecturaActual.preguntas.forEach((pregunta, qIndex) => {
+                let opciones = pregunta.options.map((opt, oIndex) => `
+                    <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-800 cursor-pointer border border-transparent">
+                        <input type="radio" name="q${qIndex}" value="${oIndex}" class="form-radio h-5 w-5 text-dalpaGreen bg-gray-700" required>
+                        <span class="text-gray-300">${opt}</span>
+                    </label>`).join('');
+                form.innerHTML += `<div class="bg-gray-900 p-6 rounded-lg border border-gray-700 mb-4"><p class="font-semibold text-white mb-4">${pregunta.q}</p><div class="flex flex-col space-y-2">${opciones}</div></div>`;
+            });
+        }
+
+        function evaluarQuiz(event) {
+            event.preventDefault();
+            const formData = new FormData(document.getElementById('quizForm'));
+            if ([...formData.keys()].length < lecturaActual.preguntas.length) return alert("Responde todas las preguntas.");
+
+            let correctas = 0;
+            lecturaActual.preguntas.forEach((p, i) => { if (parseInt(formData.get(`q${i}`)) === p.ans) correctas++; });
+            
+            const comp = Math.round((correctas / lecturaActual.preguntas.length) * 100);
+            const wpm = Math.round(lecturaActual.referencia / lecturaActual.tiempoSegundos);
+
+            let historial = JSON.parse(localStorage.getItem('dalpaHistorialLectura')) || [];
+            historial.push({ fecha: new Date().toLocaleDateString(), lectura: lecturaActual.titulo, wpm, comprension: comp });
+            localStorage.setItem('dalpaHistorialLectura', JSON.stringify(historial));
+
+            document.getElementById('quizArea').classList.add('hidden');
+            document.getElementById('resultsArea').classList.remove('hidden');
+            document.getElementById('resultWPM').innerHTML = `${wpm} <span class="text-lg text-gray-400">PPM</span>`;
+            document.getElementById('resultComp').innerHTML = `${comp}<span class="text-lg">%</span>`;
+
+            if (!appState.diagnostico) {
+                appState.diagnostico = true;
+                appState.progress = Math.min(appState.progress + 25, 100);
                 localStorage.setItem('dalpaState', JSON.stringify(appState));
                 updateProgressUI();
             }
+            renderizarGrafica();
+        }
 
-            // --- 2. Lógica de Navegación (SPA) ---
-            const navButtons = document.querySelectorAll('.nav-btn');
-            const views = document.querySelectorAll('.app-view');
-
-            function switchView(targetId) {
-                // Ocultar todas las vistas
-                views.forEach(view => {
-                    view.classList.add('hidden-view');
-                    view.classList.remove('fade-enter-active');
-                });
-
-                // Mostrar la vista objetivo
-                const targetView = document.getElementById(targetId);
-                if (targetView) {
-                    targetView.classList.remove('hidden-view');
-                    // Pequeño timeout para permitir que CSS aplique la transición
-                    setTimeout(() => {
-                        targetView.classList.add('fade-enter-active');
-                    }, 10);
-                }
-
-                // Actualizar estilos del menú
-                navButtons.forEach(btn => {
-                    if(btn.dataset.target === targetId) {
-                        btn.classList.remove('text-gray-400', 'hover:bg-gray-800');
-                        btn.classList.add('bg-dalpaBlue', 'bg-opacity-20', 'text-dalpaBlue', 'text-white');
-                    } else {
-                        btn.classList.add('text-gray-400', 'hover:bg-gray-800');
-                        btn.classList.remove('bg-dalpaBlue', 'bg-opacity-20', 'text-dalpaBlue', 'text-white');
-                    }
-                });
-
-                // Guardar la última vista visitada
-                appState.lastView = targetId;
-                saveState();
-                
-                // Cerrar sidebar en móviles
-                closeMobileSidebar();
-            }
-
-            // Asignar eventos de clic al menú
-            navButtons.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    switchView(e.currentTarget.dataset.target);
-                });
+        function renderizarGrafica() {
+            const historial = JSON.parse(localStorage.getItem('dalpaHistorialLectura')) || [];
+            if (!historial.length) return;
+            if (myChart) myChart.destroy();
+            
+            Chart.defaults.color = '#9CA3AF';
+            myChart = new Chart(document.getElementById('progressChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: historial.map((_, i) => `Prueba ${i + 1}`),
+                    datasets: [
+                        { label: 'PPM', data: historial.map(h => h.wpm), borderColor: '#3B82F6', tension: 0.3, yAxisID: 'y' },
+                        { label: 'Comprensión %', data: historial.map(h => h.comprension), borderColor: '#10B981', tension: 0.3, yAxisID: 'y1' }
+                    ]
+                },
+                options: { responsive: true, scales: { y: { position: 'left' }, y1: { position: 'right', min: 0, max: 100 } } }
             });
+        }
 
-            // --- 3. UI y Responsive (Menú móvil) ---
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            const openBtn = document.getElementById('openSidebarBtn');
-            const closeBtn = document.getElementById('closeSidebarBtn');
+        function resetDiagnostico() {
+            document.getElementById('resultsArea').classList.add('hidden');
+            document.getElementById('diagnosticSelector').classList.remove('hidden');
+        }
 
-            function openMobileSidebar() {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            }
-
-            function closeMobileSidebar() {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
-
-            openBtn.addEventListener('click', openMobileSidebar);
-            closeBtn.addEventListener('click', closeMobileSidebar);
-            overlay.addEventListener('click', closeMobileSidebar);
-
-            // --- 4. Inicialización ---
-            function updateProgressUI() {
-                const progressBar = document.getElementById('progressBar');
-                const progressText = document.getElementById('progressText');
-                progressBar.style.width = appState.progress + '%';
-                progressText.textContent = appState.progress + '%';
-            }
-
-            // Arrancar la app
-            updateProgressUI();
-            switchView(appState.lastView || 'view-dashboard');
+        document.getElementById('showChartBtn').addEventListener('click', () => {
+            document.getElementById('diagnosticSelector').classList.add('hidden');
+            document.getElementById('readingArea').classList.add('hidden');
+            document.getElementById('quizArea').classList.add('hidden');
+            document.getElementById('resultsArea').classList.remove('hidden');
+            renderizarGrafica();
         });
+
+        // 3. Iniciar Aplicación
+        updateProgressUI();
+        switchView(appState.lastView || 'view-dashboard');
     </script>
 </body>
 </html>
