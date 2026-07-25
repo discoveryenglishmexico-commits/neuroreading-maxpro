@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DALPA Tomo I - MAX Neuroeducation</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración de colores personalizados de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        dalpaBg: '#0B0F19',
+                        dalpaCard: '#1E293B',
+                        dalpaBlue: '#3B82F6',
+                        dalpaGreen: '#10B981'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Transiciones suaves para la SPA */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hidden-view {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-dalpaBg text-gray-200 font-sans h-screen flex overflow-hidden">
+
+    <!-- Menú Lateral (Sidebar) -->
+    <aside id="sidebar" class="bg-dalpaCard w-72 flex-shrink-0 flex flex-col h-full absolute md:relative z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out border-r border-gray-700">
+        
+        <!-- Header del Menú -->
+        <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-white tracking-wide">MAX <span class="text-dalpaBlue">Neuro</span></h1>
+                <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Discovery - DALPA I</p>
+            </div>
+            <!-- Botón cerrar móvil -->
+            <button id="closeSidebarBtn" class="md:hidden text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <!-- Progreso General -->
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-semibold text-gray-300">Progreso del Curso</span>
+                <span id="progressText" class="text-sm font-bold text-dalpaGreen">0%</span>
+            </div>
+            <div class="w-full bg-gray-700 rounded-full h-2.5">
+                <div id="progressBar" class="bg-dalpaGreen h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Navegación -->
+        <nav class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-1 px-3">
+                <li><button data-target="view-dashboard" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-white bg-dalpaBlue bg-opacity-20 text-dalpaBlue">🏠 Inicio / Dashboard</button></li>
+                <li><button data-target="view-diagnostico" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">📊 Diagnóstico Inicial</button></li>
+                <li><button data-target="view-modulo1" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">🎯 Mód 1: Gimnasia Ocular</button></li>
+                <li><button data-target="view-modulo2" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">👁️ Mód 2: Flexores Visuales</button></li>
+                <li><button data-target="view-modulo3" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">🧠 Mód 3: Retos de Atención</button></li>
+                <li><button data-target="view-perfil" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">📈 Mi Perfil e Historial</button></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Overlay para móviles -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden">
+        <!-- Topbar móvil -->
+        <header class="md:hidden bg-dalpaCard border-b border-gray-700 p-4 flex justify-between items-center">
+            <h2 class="text-lg font-bold text-white">DALPA Tomo I</h2>
+            <button id="openSidebarBtn" class="text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </header>
+
+        <!-- Contenedor de Vistas (Vistas SPA) -->
+        <div class="flex-1 overflow-y-auto p-6 md:p-10" id="mainContainer">
+            
+            <!-- Vista: Dashboard -->
+            <section id="view-dashboard" class="app-view fade-enter fade-enter-active">
+                <h2 class="text-3xl font-bold text-white mb-6">Bienvenido a tu Preparación</h2>
+                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <p class="text-gray-400">Aquí diseñaremos el panel principal con el resumen de actividades.</p>
+                </div>
+            </section>
+
+            <!-- Vista: Diagnóstico -->
+            <section id="view-diagnostico" class="app-view hidden-view fade-enter">
+                <h2 class="text-3xl font-bold text-white mb-6">Diagnóstico Inicial</h2>
+                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <p class="text-gray-400">Marcador de posición para la Lectura 1 y la evaluación.</p>
+                </div>
+            </section>
+
+            <!-- Vista: Módulo 1 -->
+            <section id="view-modulo1" class="app-view hidden-view fade-enter">
+                <h2 class="text-3xl font-bold text-white mb-6">Módulo 1: Gimnasia Ocular Interactiva</h2>
+                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <p class="text-gray-400">Marcador de posición para los ejercicios de desplazamiento.</p>
+                </div>
+            </section>
+
+            <!-- Vista: Módulo 2 -->
+            <section id="view-modulo2" class="app-view hidden-view fade-enter">
+                <h2 class="text-3xl font-bold text-white mb-6">Módulo 2: Flexores Visuales DALPA</h2>
+                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <p class="text-gray-400">Marcador de posición para Flexor 1 y 2.</p>
+                </div>
+            </section>
+
+            <!-- Vista: Módulo 3 -->
+            <section id="view-modulo3" class="app-view hidden-view fade-enter">
+                <h2 class="text-3xl font-bold text-white mb-6">Módulo 3: Retos de Atención y Memoria</h2>
+                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <p class="text-gray-400">Marcador de posición para pensamiento activo.</p>
+                </div>
+            </section>
+
+            <!-- Vista: Perfil -->
+            <section id="view-perfil" class="app-view hidden-view fade-enter">
+                <h2 class="text-3xl font-bold text-white mb-6">Mi Perfil e Historial</h2>
+                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <p class="text-gray-400">Marcador de posición para las gráficas de progreso en PPM y Comprensión.</p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Lógica de la Aplicación (JavaScript) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 1. Estado de la Aplicación y LocalStorage ---
+            const defaultState = {
+                progress: 0,
+                lastView: 'view-dashboard',
+                diagnostico: null,
+                modulos: { m1: false, m2: false, m3: false }
+            };
+
+            let appState = JSON.parse(localStorage.getItem('dalpaState')) || defaultState;
+
+            // Función para guardar datos en el navegador
+            function saveState() {
+                localStorage.setItem('dalpaState', JSON.stringify(appState));
+                updateProgressUI();
+            }
+
+            // --- 2. Lógica de Navegación (SPA) ---
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const views = document.querySelectorAll('.app-view');
+
+            function switchView(targetId) {
+                // Ocultar todas las vistas
+                views.forEach(view => {
+                    view.classList.add('hidden-view');
+                    view.classList.remove('fade-enter-active');
+                });
+
+                // Mostrar la vista objetivo
+                const targetView = document.getElementById(targetId);
+                if (targetView) {
+                    targetView.classList.remove('hidden-view');
+                    // Pequeño timeout para permitir que CSS aplique la transición
+                    setTimeout(() => {
+                        targetView.classList.add('fade-enter-active');
+                    }, 10);
+                }
+
+                // Actualizar estilos del menú
+                navButtons.forEach(btn => {
+                    if(btn.dataset.target === targetId) {
+                        btn.classList.remove('text-gray-400', 'hover:bg-gray-800');
+                        btn.classList.add('bg-dalpaBlue', 'bg-opacity-20', 'text-dalpaBlue', 'text-white');
+                    } else {
+                        btn.classList.add('text-gray-400', 'hover:bg-gray-800');
+                        btn.classList.remove('bg-dalpaBlue', 'bg-opacity-20', 'text-dalpaBlue', 'text-white');
+                    }
+                });
+
+                // Guardar la última vista visitada
+                appState.lastView = targetId;
+                saveState();
+                
+                // Cerrar sidebar en móviles
+                closeMobileSidebar();
+            }
+
+            // Asignar eventos de clic al menú
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    switchView(e.currentTarget.dataset.target);
+                });
+            });
+
+            // --- 3. UI y Responsive (Menú móvil) ---
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const openBtn = document.getElementById('openSidebarBtn');
+            const closeBtn = document.getElementById('closeSidebarBtn');
+
+            function openMobileSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            }
+
+            function closeMobileSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+
+            openBtn.addEventListener('click', openMobileSidebar);
+            closeBtn.addEventListener('click', closeMobileSidebar);
+            overlay.addEventListener('click', closeMobileSidebar);
+
+            // --- 4. Inicialización ---
+            function updateProgressUI() {
+                const progressBar = document.getElementById('progressBar');
+                const progressText = document.getElementById('progressText');
+                progressBar.style.width = appState.progress + '%';
+                progressText.textContent = appState.progress + '%';
+            }
+
+            // Arrancar la app
+            updateProgressUI();
+            switchView(appState.lastView || 'view-dashboard');
+        });
+    </script>
+</body>
+</html>
