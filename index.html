@@ -3,275 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discovery MAX Neuroeducation - DALPA I</title>
-    <!-- Tailwind CSS -->
+    <title>DALPA Tomo I - MAX Neuroeducation</title>
+    
+    <!-- Fuentes y Librerías -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Configuración Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { dalpaBg: '#0B0F19', dalpaCard: '#1E293B', dalpaBlue: '#3B82F6', dalpaGreen: '#10B981' }
+                }
+            }
+        }
+    </script>
+
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0B0F19; color: #F3F4F6; }
-        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .fade-enter { opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease-out, transform 0.4s ease-out; }
+        .fade-enter-active { opacity: 1; transform: translateY(0); }
         .hidden-view { display: none !important; }
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Estilos para el Ejercicio 1 (Tarjeta de Apoyo) */
+        /* Estilos Ejercicio 1 */
         .reading-text-container { position: relative; line-height: 2.5rem; font-size: 1.125rem; }
         #support-card {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 2.5rem;
-            background-color: rgba(59, 130, 246, 0.3); /* Azul semitransparente */
-            border: 2px solid rgba(59, 130, 246, 0.6);
-            border-radius: 0.25rem;
-            pointer-events: none;
-            transition: top 0.1s linear;
-            display: none;
+            position: absolute; left: 0; width: 100%; height: 2.5rem;
+            background-color: rgba(59, 130, 246, 0.3);
+            border: 2px solid rgba(59, 130, 246, 0.6); border-radius: 0.25rem;
+            pointer-events: none; transition: top 0.1s linear; display: none;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-4 md:p-8">
+<body class="bg-dalpaBg text-gray-200 font-sans h-screen flex overflow-hidden">
 
-    <!-- Navegación Principal -->
-    <nav class="w-full max-w-5xl flex justify-between items-center mb-8 glass-panel p-4 rounded-2xl shadow-lg">
-        <div>
-            <h1 class="text-2xl font-bold text-white tracking-wide">MAX <span class="text-blue-500">Neuro</span></h1>
-            <p class="text-xs text-gray-400 uppercase tracking-widest">Discovery - DALPA I</p>
+    <!-- MENÚ LATERAL (SIDEBAR) RESTAURADO -->
+    <aside id="sidebar" class="bg-dalpaCard w-72 flex-shrink-0 flex flex-col h-full absolute md:relative z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300 border-r border-gray-700">
+        <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-white tracking-wide">MAX <span class="text-dalpaBlue">Neuro</span></h1>
+                <p class="text-xs text-gray-400 uppercase mt-1">Discovery - DALPA I</p>
+            </div>
+            <button id="closeSidebarBtn" class="md:hidden text-gray-400 hover:text-white">✕</button>
         </div>
-        <div class="flex space-x-4">
-            <button onclick="switchView('diagnostic-view')" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors text-sm font-semibold shadow-md">Diagnóstico</button>
-            <button onclick="switchView('exercises-view')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors text-sm font-semibold shadow-md">Ejercicios</button>
-        </div>
-    </nav>
 
-    <!-- VISTA: DIAGNÓSTICO -->
-    <main id="diagnostic-view" class="w-full max-w-5xl fade-in">
-        <div class="glass-panel p-8 rounded-2xl shadow-2xl">
-            <h2 class="text-3xl font-bold text-white mb-6 text-center">Diagnóstico Inicial de Lectura</h2>
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex justify-between text-sm mb-2"><span class="text-gray-300">Progreso</span><span id="progressText" class="text-dalpaGreen font-bold">0%</span></div>
+            <div class="w-full bg-gray-700 rounded-full h-2.5">
+                <div id="progressBar" class="bg-dalpaGreen h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-1 px-3">
+                <li><button data-target="view-dashboard" class="nav-btn w-full flex text-left px-4 py-3 text-sm rounded-lg text-white bg-dalpaBlue bg-opacity-20 text-dalpaBlue">🏠 Inicio / Dashboard</button></li>
+                <li><button data-target="view-diagnostico" class="nav-btn w-full flex text-left px-4 py-3 text-sm rounded-lg text-gray-400 hover:text-white hover:bg-gray-800">📊 Diagnóstico Inicial</button></li>
+                <li><button data-target="view-modulo1" class="nav-btn w-full flex text-left px-4 py-3 text-sm rounded-lg text-gray-400 hover:text-white hover:bg-gray-800">🎯 Mód 1: Gimnasia Ocular</button></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden">
+        <header class="md:hidden bg-dalpaCard border-b border-gray-700 p-4 flex justify-between items-center">
+            <h2 class="text-lg font-bold text-white">DALPA Tomo I</h2>
+            <button id="openSidebarBtn" class="text-gray-400">☰</button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-10">
             
-            <!-- Selector de Lecturas -->
-            <div id="diag-selector" class="flex flex-col md:flex-row gap-6 justify-center">
-                <button onclick="startDiagnostic('soberbia')" class="flex-1 p-6 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-xl transition-all shadow-md text-left group">
-                    <h3 class="text-xl font-bold text-blue-400 group-hover:text-blue-300">Lectura 1</h3>
-                    <p class="text-gray-300 mt-2">Sobre la soberbia</p>
-                </button>
-                <button onclick="startDiagnostic('mexico')" class="flex-1 p-6 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-xl transition-all shadow-md text-left group">
-                    <h3 class="text-xl font-bold text-emerald-400 group-hover:text-emerald-300">Lectura 2</h3>
-                    <p class="text-gray-300 mt-2">México: Esfuerzos y Heroísmo</p>
-                </button>
-            </div>
-
-            <!-- Área de Lectura -->
-            <div id="diag-reading-area" class="hidden-view mt-6">
-                <p class="text-gray-400 text-sm text-center mb-6">Lee a tu ritmo natural. El tiempo corre en segundo plano.</p>
-                <div id="diag-text-content" class="text-gray-200 text-lg leading-relaxed text-justify mb-8 p-6 bg-gray-900 rounded-xl border border-gray-700"></div>
-                <div class="text-center">
-                    <button onclick="finishDiagnosticReading()" class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transform hover:scale-105 transition-all">He Terminado de Leer</button>
+            <!-- VISTA: INICIO -->
+            <section id="view-dashboard" class="app-view fade-enter fade-enter-active">
+                <h2 class="text-3xl font-bold text-white mb-6">Bienvenido a tu Preparación</h2>
+                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <p class="text-gray-400">Desde el menú lateral puedes acceder a tu Diagnóstico y a los Ejercicios de Gimnasia Ocular.</p>
                 </div>
-            </div>
+            </section>
 
-            <!-- Área de Evaluación -->
-            <div id="diag-quiz-area" class="hidden-view mt-6">
-                <h3 class="text-2xl font-bold text-emerald-400 mb-4">Evaluación de Comprensión</h3>
-                <form id="diag-quiz-form" class="space-y-6"></form>
-                <div class="mt-8 text-right">
-                    <button onclick="submitDiagnosticQuiz(event)" class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition-all">Enviar Resultados</button>
-                </div>
-            </div>
-
-            <!-- Resultados y Gráfica -->
-            <div id="diag-results-area" class="hidden-view mt-8 flex flex-col items-center">
-                <div class="grid grid-cols-2 gap-6 w-full max-w-2xl mb-8">
-                    <div class="bg-gray-900 p-6 rounded-xl border border-gray-700 text-center">
-                        <p class="text-gray-400 text-sm uppercase tracking-wider mb-2">Velocidad</p>
-                        <p id="res-ppm" class="text-4xl font-bold text-blue-500">0 <span class="text-lg">PPM</span></p>
+            <!-- VISTA: DIAGNÓSTICO -->
+            <section id="view-diagnostico" class="app-view hidden-view fade-enter">
+                <h2 class="text-3xl font-bold text-white mb-6">Diagnóstico Inicial</h2>
+                <div class="bg-dalpaCard p-8 rounded-xl border border-gray-700 shadow-lg relative">
+                    
+                    <div id="diag-selector" class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="startDiagnostic('soberbia')" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white p-4 rounded-lg border border-gray-600 text-left">
+                            Lectura 1: <span class="text-dalpaBlue">Sobre la soberbia</span>
+                        </button>
+                        <button onclick="startDiagnostic('mexico')" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white p-4 rounded-lg border border-gray-600 text-left">
+                            Lectura 2: <span class="text-dalpaGreen">México: suma de esfuerzos</span>
+                        </button>
                     </div>
-                    <div class="bg-gray-900 p-6 rounded-xl border border-gray-700 text-center">
-                        <p class="text-gray-400 text-sm uppercase tracking-wider mb-2">Comprensión</p>
-                        <p id="res-comp" class="text-4xl font-bold text-emerald-500">0%</p>
+
+                    <div id="diag-reading-area" class="hidden-view mt-6 text-center">
+                        <div id="diag-text-content" class="text-gray-200 text-lg text-justify mb-6 bg-gray-900 p-6 rounded-lg border border-gray-700"></div>
+                        <button onclick="finishDiagnosticReading()" class="bg-dalpaBlue text-white px-8 py-3 rounded-full font-bold">He Terminado de Leer</button>
+                    </div>
+
+                    <div id="diag-quiz-area" class="hidden-view mt-6">
+                        <h3 class="text-2xl font-bold text-dalpaGreen mb-4">Evaluación</h3>
+                        <form id="diag-quiz-form" class="space-y-4"></form>
+                        <button onclick="submitDiagnosticQuiz(event)" class="mt-6 bg-dalpaGreen text-white px-8 py-3 rounded-lg font-bold">Enviar</button>
+                    </div>
+
+                    <div id="diag-results-area" class="hidden-view mt-6">
+                        <div class="grid grid-cols-2 gap-4 text-center mb-6">
+                            <div class="bg-gray-900 p-4 rounded-lg border border-gray-700"><p class="text-gray-400">Velocidad</p><p id="res-ppm" class="text-3xl text-dalpaBlue font-bold">0 PPM</p></div>
+                            <div class="bg-gray-900 p-4 rounded-lg border border-gray-700"><p class="text-gray-400">Comprensión</p><p id="res-comp" class="text-3xl text-dalpaGreen font-bold">0%</p></div>
+                        </div>
+                        <canvas id="progressChart" height="100"></canvas>
+                        <button onclick="resetDiagnostic()" class="mt-4 text-gray-400 underline">Volver</button>
                     </div>
                 </div>
-                <div class="w-full max-w-3xl bg-gray-900 p-4 rounded-xl border border-gray-700">
-                    <canvas id="progressChart" height="100"></canvas>
-                </div>
-                <button onclick="resetDiagnostic()" class="mt-6 text-gray-400 hover:text-white underline">Volver al inicio</button>
-            </div>
-        </div>
-    </main>
+            </section>
 
-    <!-- VISTA: EJERCICIOS CAPÍTULO 1 -->
-    <main id="exercises-view" class="w-full max-w-5xl hidden-view fade-in">
-        <div class="glass-panel p-8 rounded-2xl shadow-2xl relative">
-            <h2 class="text-3xl font-bold text-white mb-2">Gimnasia Ocular y Agilidad Mental</h2>
-            <p class="text-gray-400 mb-8">Módulo de Entrenamiento - Capítulo 1</p>
-
-            <!-- Carrusel / Menú de Pasos -->
-            <div class="flex overflow-x-auto gap-3 pb-4 mb-6 custom-scrollbar">
-                <button onclick="loadExercise(1)" class="whitespace-nowrap px-4 py-2 bg-blue-600/20 text-blue-400 border border-blue-500/50 rounded-lg font-semibold hover:bg-blue-600/40 transition-colors">Paso 1: Tarjeta de Apoyo</button>
-                <button class="whitespace-nowrap px-4 py-2 bg-gray-800 text-gray-400 border border-gray-700 rounded-lg opacity-50 cursor-not-allowed">Paso 2: Columnas (Próximamente)</button>
-                <button class="whitespace-nowrap px-4 py-2 bg-gray-800 text-gray-400 border border-gray-700 rounded-lg opacity-50 cursor-not-allowed">Paso 3: Flexor #1 (Próximamente)</button>
-            </div>
-
-            <!-- Contenedor Dinámico del Ejercicio -->
-            <div id="active-exercise-container" class="bg-gray-900 border border-gray-700 rounded-xl p-6 min-h-[400px]">
+            <!-- VISTA: MÓDULO 1 (EJERCICIOS) -->
+            <section id="view-modulo1" class="app-view hidden-view fade-enter">
+                <h2 class="text-3xl font-bold text-white mb-6">Módulo 1: Gimnasia Ocular</h2>
                 
-                <!-- EJERCICIO 1: Educando el ojo -->
-                <div id="ex1-module">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-blue-400">Paso 1: Educando el ojo</h3>
+                <!-- Carrusel de pasos -->
+                <div class="flex overflow-x-auto gap-3 pb-4 mb-6">
+                    <button class="px-4 py-2 bg-dalpaBlue/20 text-dalpaBlue border border-dalpaBlue rounded-lg font-semibold">Paso 1: Tarjeta de Apoyo</button>
+                    <button class="px-4 py-2 bg-gray-800 text-gray-500 rounded-lg cursor-not-allowed">Paso 2 (Próximamente)</button>
+                </div>
+
+                <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                        <h3 class="text-xl font-bold text-dalpaBlue">Ejercicio 1: Educando el ojo</h3>
                         <div class="flex items-center gap-3">
-                            <label class="text-sm text-gray-400">Velocidad (PPM):</label>
-                            <input type="range" id="ex1-speed" min="150" max="500" value="250" class="w-32 accent-blue-500" oninput="document.getElementById('speed-val').innerText = this.value">
-                            <span id="speed-val" class="text-sm font-bold w-8">250</span>
-                            <button onclick="startEx1()" id="ex1-btn" class="ml-4 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg font-bold text-white shadow-md transition-all">Iniciar</button>
+                            <span class="text-sm text-gray-400">Velocidad:</span>
+                            <input type="range" id="ex1-speed" min="150" max="500" value="250" oninput="document.getElementById('speed-val').innerText = this.value">
+                            <span id="speed-val" class="w-8 font-bold text-white">250</span>
+                            <button onclick="startEx1()" id="ex1-btn" class="px-4 py-2 bg-dalpaGreen text-white font-bold rounded-lg">Iniciar</button>
                         </div>
                     </div>
                     
-                    <!-- Contenedor del Texto con la Tarjeta Digital -->
-                    <div class="reading-text-container bg-gray-800 p-6 rounded-lg text-gray-300 text-justify overflow-hidden" id="ex1-text-box">
+                    <div class="reading-text-container bg-gray-900 p-6 rounded-lg text-gray-300 text-justify overflow-hidden" id="ex1-text-box">
                         <div id="support-card"></div>
                         <p id="ex1-content">
                             En el extremo sur de Grecia se encuentra una pequeña península, bañada por las azules aguas del Mediterráneo, montañosa, de rocas peladas y estériles, con tres pequeñas llanuras interiores que constituyen el único espacio capaz de albergar una exigua población; de clima cálido y seco, el suelo produce trigo, cebada, olivos, higos y vid, en cantidades escasas, pero de calidad excelente. Abundan las canteras de mármol y las minas de plata y sus costas son fecundas en pesca. Esta pequeña península se llama el Ática y en el centro se edificó hace ya tres mil años una antigua ciudad que señalará toda una época de la historia mundial: Atenas, la cuna de la democracia.<br><br>
                             Parece ser que la población originaria del Ática era de origen pelásgico, que practicaba la forma de vida de la ciudad-estado, propia de la época Mesolítica del Medio Oriente. Conocían el alfabeto y la moneda y eran activos comerciantes y navegantes. Se jactaban de haber vivido siempre en el mismo país y según afirmaban: "sus antepasados nacieron en aquel mismo suelo, como las cigarras".
                         </p>
                     </div>
-                    
-                    <div class="mt-6 text-right">
-                        <button onclick="markComplete(1)" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 border border-gray-500 rounded-lg font-semibold text-white transition-all">✓ Marcar como Completado</button>
-                    </div>
                 </div>
-
-            </div>
+            </section>
         </div>
     </main>
 
     <!-- LÓGICA JAVASCRIPT -->
     <script>
-        // --- 1. GESTIÓN DEL ESTADO ---
-        const state = {
-            activeReading: null,
-            startTime: 0,
-            endTime: 0,
-            elapsedSeconds: 0,
-            answers: [],
-            history: JSON.parse(localStorage.getItem('dalpa_diagnosticos_v1')) || [],
-            completedExercises: JSON.parse(localStorage.getItem('dalpa_exercises_v1')) || []
-        };
+        // --- 1. Navegación (Sidebar) ---
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const views = document.querySelectorAll('.app-view');
 
-        const db = {
-            soberbia: {
-                ref: 17580,
-                text: "Sólo odiamos, lo mismo que amamos, lo que en algo, de una o de otra manera, se nos parece...", // (Texto acortado para el ejemplo, debes colocar el real aquí)
-                questions: [
-                    { q: "1. El odio y el amor son sentimientos:", opts: ["Equivalentes.", "Similares.", "Diferentes.", "Parecidos.", "Antónimos."], ans: 0 }
-                ]
-            },
-            mexico: {
-                ref: 18180,
-                text: "Si estuvieran con nosotros quienes vivieron y murieron para que México fuese algo de lo que hoy es...", // (Texto acortado)
-                questions: [
-                    { q: "1. Según la lectura, ¿quiénes vivieron y murieron?", opts: ["Conservadores.", "Monárquicos e insurgentes.", "Liberales y reaccionarios.", "Insurgentes.", "Todos los anteriores."], ans: 4 }
-                ]
-            }
-        };
-
-        // --- 2. NAVEGACIÓN SPA ---
-        function switchView(viewId) {
-            document.getElementById('diagnostic-view').classList.add('hidden-view');
-            document.getElementById('exercises-view').classList.add('hidden-view');
-            document.getElementById(viewId).classList.remove('hidden-view');
-            if (viewId === 'diagnostic-view') renderChart();
+        function switchView(targetId) {
+            views.forEach(v => { v.classList.add('hidden-view'); v.classList.remove('fade-enter-active'); });
+            const target = document.getElementById(targetId);
+            if (target) { target.classList.remove('hidden-view'); setTimeout(() => target.classList.add('fade-enter-active'), 10); }
+            
+            navButtons.forEach(btn => {
+                if(btn.dataset.target === targetId) {
+                    btn.classList.replace('text-gray-400', 'text-white');
+                    btn.classList.add('bg-dalpaBlue', 'bg-opacity-20', 'text-dalpaBlue');
+                } else {
+                    btn.classList.replace('text-white', 'text-gray-400');
+                    btn.classList.remove('bg-dalpaBlue', 'bg-opacity-20', 'text-dalpaBlue');
+                }
+            });
+            
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.add('hidden');
         }
 
-        // --- 3. LÓGICA DEL DIAGNÓSTICO ---
-        function startDiagnostic(readingId) {
-            state.activeReading = readingId;
+        navButtons.forEach(btn => btn.addEventListener('click', (e) => switchView(e.currentTarget.dataset.target)));
+        document.getElementById('openSidebarBtn').addEventListener('click', () => { document.getElementById('sidebar').classList.remove('-translate-x-full'); document.getElementById('sidebarOverlay').classList.remove('hidden'); });
+        document.getElementById('closeSidebarBtn').addEventListener('click', () => { document.getElementById('sidebar').classList.add('-translate-x-full'); document.getElementById('sidebarOverlay').classList.add('hidden'); });
+
+        // --- 2. Diagnóstico ---
+        const dbDiag = {
+            soberbia: { ref: 17580, text: "Sólo odiamos, lo mismo que amamos, lo que en algo, de una o de otra manera, se nos parece... [Reemplaza en tu editor por el texto completo]", questions: [{ q: "1. El odio y el amor son sentimientos:", opts: ["Equivalentes.", "Similares.", "Diferentes.", "Parecidos.", "Antónimos."], ans: 0 }, { q: "2. La envidia se aborrece cuando...", opts: ["A.", "Un sujeto la observa en otra persona.", "C.", "D.", "E."], ans: 1 }] },
+            mexico: { ref: 18180, text: "Si estuvieran con nosotros quienes vivieron y murieron para que México fuese algo... [Reemplaza en tu editor por el texto completo]", questions: [{ q: "1. Según la lectura, ¿quiénes vivieron y murieron?", opts: ["A.", "B.", "C.", "D.", "Todos los anteriores."], ans: 4 }] }
+        };
+
+        let diagState = { active: null, start: 0, history: JSON.parse(localStorage.getItem('dalpa_history')) || [] };
+
+        function startDiagnostic(id) {
+            diagState.active = id;
             document.getElementById('diag-selector').classList.add('hidden-view');
             document.getElementById('diag-reading-area').classList.remove('hidden-view');
-            document.getElementById('diag-text-content').innerHTML = db[readingId].text;
-            
-            // Cronómetro Silencioso
-            state.startTime = performance.now();
+            document.getElementById('diag-text-content').innerHTML = dbDiag[id].text;
+            diagState.start = performance.now();
         }
 
         function finishDiagnosticReading() {
-            // Registrar tiempo exacto
-            state.endTime = performance.now();
-            state.elapsedSeconds = (state.endTime - state.startTime) / 1000;
-
-            // PREVENCIÓN DE TRAMPAS: Ocultar texto inmediatamente
+            const secs = (performance.now() - diagState.start) / 1000;
+            diagState.secs = secs;
             document.getElementById('diag-reading-area').classList.add('hidden-view');
             document.getElementById('diag-quiz-area').classList.remove('hidden-view');
-
-            // Generar Formulario
+            
             const form = document.getElementById('diag-quiz-form');
             form.innerHTML = '';
-            db[state.activeReading].questions.forEach((q, i) => {
-                let options = q.opts.map((opt, j) => `
-                    <label class="flex items-center space-x-3 p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition">
-                        <input type="radio" name="q${i}" value="${j}" required class="form-radio text-emerald-500">
-                        <span class="text-gray-300">${opt}</span>
-                    </label>
-                `).join('');
-                form.innerHTML += `<div class="mb-4"><p class="text-white font-semibold mb-3">${q.q}</p><div class="flex flex-col gap-2">${options}</div></div>`;
+            dbDiag[diagState.active].questions.forEach((q, i) => {
+                let opts = q.opts.map((o, j) => `<label class="block p-2 bg-gray-800 rounded"><input type="radio" name="q${i}" value="${j}" required class="mr-2">${o}</label>`).join('');
+                form.innerHTML += `<div class="mb-4"><p class="text-white mb-2">${q.q}</p>${opts}</div>`;
             });
         }
 
         function submitDiagnosticQuiz(e) {
             e.preventDefault();
             const form = document.getElementById('diag-quiz-form');
-            if(!form.checkValidity()) return alert("Por favor responde todas las preguntas.");
-
+            if(!form.checkValidity()) return alert("Responde todo.");
+            
             let correctas = 0;
             const data = new FormData(form);
-            const totalQ = db[state.activeReading].questions.length;
+            dbDiag[diagState.active].questions.forEach((q, i) => { if(parseInt(data.get(`q${i}`)) === q.ans) correctas++; });
             
-            db[state.activeReading].questions.forEach((q, i) => {
-                if(parseInt(data.get(`q${i}`)) === q.ans) correctas++;
-            });
-
-            // FÓRMULA DALPA
-            const comp = Math.round((correctas / totalQ) * 100);
-            const wpm = Math.round(db[state.activeReading].ref / state.elapsedSeconds);
-
-            // Guardar en LocalStorage
-            const nuevoResultado = {
-                fecha: new Date().toLocaleDateString(),
-                lectura: state.activeReading === 'soberbia' ? 'Sobre la Soberbia' : 'México: Esfuerzos',
-                ppm: wpm,
-                comprension: comp
-            };
-            state.history.push(nuevoResultado);
-            localStorage.setItem('dalpa_diagnosticos_v1', JSON.stringify(state.history));
-
-            // Mostrar Resultados
+            const comp = Math.round((correctas / dbDiag[diagState.active].questions.length) * 100);
+            const wpm = Math.round(dbDiag[diagState.active].ref / diagState.secs);
+            
+            diagState.history.push({ wpm, comp });
+            localStorage.setItem('dalpa_history', JSON.stringify(diagState.history));
+            
             document.getElementById('diag-quiz-area').classList.add('hidden-view');
             document.getElementById('diag-results-area').classList.remove('hidden-view');
-            document.getElementById('res-ppm').innerHTML = `${wpm} <span class="text-lg">PPM</span>`;
+            document.getElementById('res-ppm').innerText = `${wpm} PPM`;
             document.getElementById('res-comp').innerText = `${comp}%`;
             
             renderChart();
         }
 
-        // --- 4. GRÁFICA CHART.JS ---
-        let myChart = null;
+        let chart = null;
         function renderChart() {
-            if (state.history.length === 0) return;
-            const ctx = document.getElementById('progressChart').getContext('2d');
-            if (myChart) myChart.destroy();
-
-            Chart.defaults.color = '#9CA3AF';
-            myChart = new Chart(ctx, {
+            if(!diagState.history.length) return;
+            if(chart) chart.destroy();
+            chart = new Chart(document.getElementById('progressChart'), {
                 type: 'line',
                 data: {
-                    labels: state.history.map((_, i) => `Intento ${i + 1}`),
+                    labels: diagState.history.map((_, i) => `T${i+1}`),
                     datasets: [
-                        { label: 'PPM', data: state.history.map(h => h.ppm), borderColor: '#3B82F6', tension: 0.3, yAxisID: 'y' },
-                        { label: 'Comprensión %', data: state.history.map(h => h.comprension), borderColor: '#10B981', tension: 0.3, yAxisID: 'y1' }
+                        { label: 'PPM', data: diagState.history.map(h => h.wpm), borderColor: '#3B82F6' },
+                        { label: '% Comp', data: diagState.history.map(h => h.comp), borderColor: '#10B981' }
                     ]
-                },
-                options: { responsive: true, scales: { y: { position: 'left' }, y1: { position: 'right', min: 0, max: 100 } } }
+                }
             });
         }
 
@@ -280,41 +256,27 @@
             document.getElementById('diag-selector').classList.remove('hidden-view');
         }
 
-        // --- 5. LÓGICA EJERCICIO 1 (TARJETA DE APOYO DIGITAL) ---
+        // --- 3. Ejercicio 1: Tarjeta Digital ---
         let ex1Interval;
         function startEx1() {
             const btn = document.getElementById('ex1-btn');
             const card = document.getElementById('support-card');
-            const container = document.getElementById('ex1-text-box');
-            const textContent = document.getElementById('ex1-content');
             
             if(btn.innerText === "Iniciar") {
                 btn.innerText = "Detener";
-                btn.classList.replace('bg-emerald-600', 'bg-red-600');
-                btn.classList.replace('hover:bg-emerald-500', 'hover:bg-red-500');
-                
+                btn.classList.replace('bg-dalpaGreen', 'bg-red-600');
                 card.style.display = 'block';
-                card.style.top = '1.5rem'; // Posición inicial (considerando padding)
-
-                // Lógica de movimiento basada en altura de línea
-                const lineHeight = 40; // 2.5rem en pixeles aprox
-                const totalHeight = textContent.offsetHeight;
-                let currentTop = 24; // 1.5rem padding top
+                card.style.top = '1.5rem';
                 
-                // Cálculo de velocidad (Estimación: palabras por renglón)
-                const ppmSetting = parseInt(document.getElementById('ex1-speed').value);
-                const wordsPerLine = 12; // Promedio de palabras por renglón ancho
-                const linesPerMinute = ppmSetting / wordsPerLine;
-                const msPerLine = (60000 / linesPerMinute);
-
+                let currentTop = 24;
+                const ppm = parseInt(document.getElementById('ex1-speed').value);
+                const msPerLine = (60000 / (ppm / 12)); // 12 palabras por renglón promedio
+                
                 clearInterval(ex1Interval);
                 ex1Interval = setInterval(() => {
-                    currentTop += lineHeight;
-                    if (currentTop >= totalHeight) {
-                        stopEx1(); // Terminó de bajar
-                    } else {
-                        card.style.top = `${currentTop}px`;
-                    }
+                    currentTop += 40; // 40px es aprox un renglón
+                    if (currentTop >= document.getElementById('ex1-content').offsetHeight) stopEx1();
+                    else card.style.top = `${currentTop}px`;
                 }, msPerLine);
             } else {
                 stopEx1();
@@ -322,28 +284,12 @@
         }
 
         function stopEx1() {
-            const btn = document.getElementById('ex1-btn');
-            const card = document.getElementById('support-card');
             clearInterval(ex1Interval);
+            const btn = document.getElementById('ex1-btn');
             btn.innerText = "Iniciar";
-            btn.classList.replace('bg-red-600', 'bg-emerald-600');
-            btn.classList.replace('hover:bg-red-500', 'hover:bg-emerald-500');
-            card.style.display = 'none';
-            card.style.top = '1.5rem';
+            btn.classList.replace('bg-red-600', 'bg-dalpaGreen');
+            document.getElementById('support-card').style.display = 'none';
         }
-
-        function markComplete(exId) {
-            if(!state.completedExercises.includes(exId)) {
-                state.completedExercises.push(exId);
-                localStorage.setItem('dalpa_exercises_v1', JSON.stringify(state.completedExercises));
-                alert(`¡Excelente! Ejercicio ${exId} guardado con éxito.`);
-            } else {
-                alert("Este ejercicio ya estaba marcado como completado.");
-            }
-        }
-
-        // Iniciar app
-        switchView('diagnostic-view');
     </script>
 </body>
 </html>
