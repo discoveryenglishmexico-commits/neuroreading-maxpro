@@ -33,13 +33,13 @@
             position: absolute; left: 0; width: 100%; height: 2.5rem;
             background-color: rgba(59, 130, 246, 0.3);
             border: 2px solid rgba(59, 130, 246, 0.6); border-radius: 0.25rem;
-            pointer-events: none; transition: top 0.1s linear; display: none;
+            pointer-events: none; transition: top 0.1s linear; display: none; z-index: 10;
         }
     </style>
 </head>
 <body class="bg-dalpaBg text-gray-200 font-sans h-screen flex overflow-hidden">
 
-    <!-- MENÚ LATERAL (SIDEBAR) RESTAURADO -->
+    <!-- MENÚ LATERAL -->
     <aside id="sidebar" class="bg-dalpaCard w-72 flex-shrink-0 flex flex-col h-full absolute md:relative z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300 border-r border-gray-700">
         <div class="p-6 border-b border-gray-700 flex justify-between items-center">
             <div>
@@ -125,29 +125,63 @@
                 <h2 class="text-3xl font-bold text-white mb-6">Módulo 1: Gimnasia Ocular</h2>
                 
                 <!-- Carrusel de pasos -->
-                <div class="flex overflow-x-auto gap-3 pb-4 mb-6">
-                    <button class="px-4 py-2 bg-dalpaBlue/20 text-dalpaBlue border border-dalpaBlue rounded-lg font-semibold">Paso 1: Tarjeta de Apoyo</button>
-                    <button class="px-4 py-2 bg-gray-800 text-gray-500 rounded-lg cursor-not-allowed">Paso 2 (Próximamente)</button>
+                <div class="flex overflow-x-auto gap-3 pb-4 mb-6" id="exercise-tabs">
+                    <button onclick="loadExercise(1)" id="tab-ex1" class="px-4 py-2 bg-dalpaBlue/20 text-dalpaBlue border border-dalpaBlue rounded-lg font-semibold transition-all">Paso 1: Tarjeta de Apoyo</button>
+                    <button onclick="loadExercise(2)" id="tab-ex2" class="px-4 py-2 bg-gray-800 text-gray-400 border border-gray-700 rounded-lg hover:bg-gray-700 transition-all">Paso 2: Columnas</button>
+                    <button class="px-4 py-2 bg-gray-800 text-gray-600 rounded-lg cursor-not-allowed">Paso 3 (Próximamente)</button>
                 </div>
 
                 <div class="bg-dalpaCard p-6 rounded-xl border border-gray-700 shadow-lg">
-                    <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
-                        <h3 class="text-xl font-bold text-dalpaBlue">Ejercicio 1: Educando el ojo</h3>
-                        <div class="flex items-center gap-3">
-                            <span class="text-sm text-gray-400">Velocidad:</span>
-                            <input type="range" id="ex1-speed" min="150" max="500" value="250" oninput="document.getElementById('speed-val').innerText = this.value">
-                            <span id="speed-val" class="w-8 font-bold text-white">250</span>
-                            <button onclick="startEx1()" id="ex1-btn" class="px-4 py-2 bg-dalpaGreen text-white font-bold rounded-lg">Iniciar</button>
+                    
+                    <!-- EJERCICIO 1: Educando el ojo -->
+                    <div id="ex1-module" class="fade-enter fade-enter-active">
+                        <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                            <h3 class="text-xl font-bold text-dalpaBlue">Ejercicio 1: Educando el ojo</h3>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm text-gray-400">Velocidad:</span>
+                                <input type="range" id="ex1-speed" min="150" max="500" value="250" oninput="document.getElementById('speed-val').innerText = this.value">
+                                <span id="speed-val" class="w-8 font-bold text-white">250</span>
+                                <button onclick="startEx1()" id="ex1-btn" class="px-4 py-2 bg-dalpaGreen text-white font-bold rounded-lg w-24">Iniciar</button>
+                            </div>
+                        </div>
+                        
+                        <div class="reading-text-container bg-gray-900 p-6 rounded-lg text-gray-300 text-justify overflow-hidden" id="ex1-text-box">
+                            <div id="support-card"></div>
+                            <p id="ex1-content">
+                                En el extremo sur de Grecia se encuentra una pequeña península, bañada por las azules aguas del Mediterráneo, montañosa, de rocas peladas y estériles, con tres pequeñas llanuras interiores que constituyen el único espacio capaz de albergar una exigua población; de clima cálido y seco, el suelo produce trigo, cebada, olivos, higos y vid, en cantidades escasas, pero de calidad excelente. Abundan las canteras de mármol y las minas de plata y sus costas son fecundas en pesca. Esta pequeña península se llama el Ática y en el centro se edificó hace ya tres mil años una antigua ciudad que señalará toda una época de la historia mundial: Atenas, la cuna de la democracia.<br><br>
+                                Parece ser que la población originaria del Ática era de origen pelásgico, que practicaba la forma de vida de la ciudad-estado, propia de la época Mesolítica del Medio Oriente. Conocían el alfabeto y la moneda y eran activos comerciantes y navegantes. Se jactaban de haber vivido siempre en el mismo país y según afirmaban: "sus antepasados nacieron en aquel mismo suelo, como las cigarras".
+                            </p>
                         </div>
                     </div>
-                    
-                    <div class="reading-text-container bg-gray-900 p-6 rounded-lg text-gray-300 text-justify overflow-hidden" id="ex1-text-box">
-                        <div id="support-card"></div>
-                        <p id="ex1-content">
-                            En el extremo sur de Grecia se encuentra una pequeña península, bañada por las azules aguas del Mediterráneo, montañosa, de rocas peladas y estériles, con tres pequeñas llanuras interiores que constituyen el único espacio capaz de albergar una exigua población; de clima cálido y seco, el suelo produce trigo, cebada, olivos, higos y vid, en cantidades escasas, pero de calidad excelente. Abundan las canteras de mármol y las minas de plata y sus costas son fecundas en pesca. Esta pequeña península se llama el Ática y en el centro se edificó hace ya tres mil años una antigua ciudad que señalará toda una época de la historia mundial: Atenas, la cuna de la democracia.<br><br>
-                            Parece ser que la población originaria del Ática era de origen pelásgico, que practicaba la forma de vida de la ciudad-estado, propia de la época Mesolítica del Medio Oriente. Conocían el alfabeto y la moneda y eran activos comerciantes y navegantes. Se jactaban de haber vivido siempre en el mismo país y según afirmaban: "sus antepasados nacieron en aquel mismo suelo, como las cigarras".
-                        </p>
+
+                    <!-- EJERCICIO 2: Desplazamiento en Columnas -->
+                    <div id="ex2-module" class="hidden-view fade-enter">
+                        <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                            <h3 class="text-xl font-bold text-dalpaBlue">Ejercicio 2: Desplazamiento en Columnas</h3>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm text-gray-400">Velocidad:</span>
+                                <input type="range" id="ex2-speed" min="150" max="500" value="250" oninput="document.getElementById('speed2-val').innerText = this.value">
+                                <span id="speed2-val" class="w-8 font-bold text-white">250</span>
+                                <button onclick="startEx2()" id="ex2-btn" class="px-4 py-2 bg-dalpaGreen text-white font-bold rounded-lg w-24">Iniciar</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Contenedor relativo para poder posicionar el escáner -->
+                        <div class="relative bg-gray-900 p-6 rounded-lg text-gray-300 flex flex-col md:flex-row gap-8" id="ex2-text-box">
+                            <!-- Escáner visual -->
+                            <div id="scanner-box-2" class="absolute bg-dalpaBlue/30 border-2 border-dalpaBlue/60 rounded hidden pointer-events-none transition-all duration-100 z-10" style="height: 2rem;"></div>
+                            
+                            <!-- Columna Izquierda -->
+                            <div id="col-left" class="flex-1 text-lg leading-8 text-justify">
+                                En el principio hubo una explosión. No una explosión como las que nos son familiares en la Tierra, que parten de un centro definido y se expanden hasta abarcar más y más aire, sino una explosión que se produjo simultáneamente en todas partes, llenando todo el espacio desde el comienzo, y en la que cada partícula de materia se alejó rápidamente de toda otra partícula.
+                            </div>
+                            <!-- Columna Derecha -->
+                            <div id="col-right" class="flex-1 text-lg leading-8 text-justify">
+                                Al cabo de un centésimo de segundo, aproximadamente, el momento más primitivo del que podemos hablar con cierta seguridad, la temperatura del Universo era de unos cien mil millones de grados centígrados. Se trata de un calor mucho mayor que el de la estrella más caliente, tan grande, que no pueden mantenerse unidos los componentes de la materia ordinaria, las moléculas, los átomos.
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </section>
         </div>
@@ -155,7 +189,7 @@
 
     <!-- LÓGICA JAVASCRIPT -->
     <script>
-        // --- 1. Navegación (Sidebar) ---
+        // --- 1. Navegación SPA ---
         const navButtons = document.querySelectorAll('.nav-btn');
         const views = document.querySelectorAll('.app-view');
 
@@ -173,7 +207,6 @@
                     btn.classList.remove('bg-dalpaBlue', 'bg-opacity-20', 'text-dalpaBlue');
                 }
             });
-            
             document.getElementById('sidebar').classList.add('-translate-x-full');
             document.getElementById('sidebarOverlay').classList.add('hidden');
         }
@@ -182,8 +215,7 @@
         document.getElementById('openSidebarBtn').addEventListener('click', () => { document.getElementById('sidebar').classList.remove('-translate-x-full'); document.getElementById('sidebarOverlay').classList.remove('hidden'); });
         document.getElementById('closeSidebarBtn').addEventListener('click', () => { document.getElementById('sidebar').classList.add('-translate-x-full'); document.getElementById('sidebarOverlay').classList.add('hidden'); });
 
-
-       // --- 2. Diagnóstico ---
+        // --- 2. Diagnóstico ---
         const dbDiag = {
             soberbia: { 
                 ref: 17580, 
@@ -208,6 +240,7 @@
                 ] 
             }
         };
+
         let diagState = { active: null, start: 0, history: JSON.parse(localStorage.getItem('dalpa_history')) || [] };
 
         function startDiagnostic(id) {
@@ -227,15 +260,15 @@
             const form = document.getElementById('diag-quiz-form');
             form.innerHTML = '';
             dbDiag[diagState.active].questions.forEach((q, i) => {
-                let opts = q.opts.map((o, j) => `<label class="block p-2 bg-gray-800 rounded"><input type="radio" name="q${i}" value="${j}" required class="mr-2">${o}</label>`).join('');
-                form.innerHTML += `<div class="mb-4"><p class="text-white mb-2">${q.q}</p>${opts}</div>`;
+                let opts = q.opts.map((o, j) => `<label class="block p-2 bg-gray-800 rounded cursor-pointer hover:bg-gray-700"><input type="radio" name="q${i}" value="${j}" required class="mr-2">${o}</label>`).join('');
+                form.innerHTML += `<div class="mb-4"><p class="text-white mb-2 font-semibold">${q.q}</p>${opts}</div>`;
             });
         }
 
         function submitDiagnosticQuiz(e) {
             e.preventDefault();
             const form = document.getElementById('diag-quiz-form');
-            if(!form.checkValidity()) return alert("Responde todo.");
+            if(!form.checkValidity()) return alert("Responde todas las preguntas.");
             
             let correctas = 0;
             const data = new FormData(form);
@@ -276,7 +309,37 @@
             document.getElementById('diag-selector').classList.remove('hidden-view');
         }
 
-        // --- 3. Ejercicio 1: Tarjeta Digital ---
+        // --- 3. Cambio entre Ejercicios ---
+        function loadExercise(id) {
+            document.getElementById('ex1-module').classList.add('hidden-view');
+            document.getElementById('ex1-module').classList.remove('fade-enter-active');
+            document.getElementById('ex2-module').classList.add('hidden-view');
+            document.getElementById('ex2-module').classList.remove('fade-enter-active');
+            
+            const target = document.getElementById(`ex${id}-module`);
+            target.classList.remove('hidden-view');
+            setTimeout(() => target.classList.add('fade-enter-active'), 10);
+            
+            // Actualizar diseño de las pestañas
+            const tabs = [document.getElementById('tab-ex1'), document.getElementById('tab-ex2')];
+            tabs.forEach((tab, index) => {
+                if(index + 1 === id) {
+                    tab.classList.replace('bg-gray-800', 'bg-dalpaBlue/20');
+                    tab.classList.replace('text-gray-400', 'text-dalpaBlue');
+                    tab.classList.replace('border-gray-700', 'border-dalpaBlue');
+                } else {
+                    tab.classList.replace('bg-dalpaBlue/20', 'bg-gray-800');
+                    tab.classList.replace('text-dalpaBlue', 'text-gray-400');
+                    tab.classList.replace('border-dalpaBlue', 'border-gray-700');
+                }
+            });
+            
+            // Detener cualquier ejercicio activo
+            stopEx1();
+            stopEx2();
+        }
+
+        // --- 4. Ejercicio 1: Tarjeta Digital ---
         let ex1Interval;
         function startEx1() {
             const btn = document.getElementById('ex1-btn');
@@ -288,13 +351,13 @@
                 card.style.display = 'block';
                 card.style.top = '1.5rem';
                 
-                let currentTop = 24;
+                let currentTop = 24; // 1.5rem padding top
                 const ppm = parseInt(document.getElementById('ex1-speed').value);
-                const msPerLine = (60000 / (ppm / 12)); // 12 palabras por renglón promedio
+                const msPerLine = (60000 / (ppm / 12)); // 12 palabras por renglón ancho
                 
                 clearInterval(ex1Interval);
                 ex1Interval = setInterval(() => {
-                    currentTop += 40; // 40px es aprox un renglón
+                    currentTop += 40; // Altura del renglón (2.5rem)
                     if (currentTop >= document.getElementById('ex1-content').offsetHeight) stopEx1();
                     else card.style.top = `${currentTop}px`;
                 }, msPerLine);
@@ -309,6 +372,64 @@
             btn.innerText = "Iniciar";
             btn.classList.replace('bg-red-600', 'bg-dalpaGreen');
             document.getElementById('support-card').style.display = 'none';
+        }
+
+        // --- 5. Ejercicio 2: Columnas ---
+        let ex2Interval;
+        function startEx2() {
+            const btn = document.getElementById('ex2-btn');
+            const scanner = document.getElementById('scanner-box-2');
+            const colLeft = document.getElementById('col-left');
+            const colRight = document.getElementById('col-right');
+
+            if(btn.innerText === "Iniciar") {
+                btn.innerText = "Detener";
+                btn.classList.replace('bg-dalpaGreen', 'bg-red-600');
+                scanner.classList.remove('hidden');
+
+                const lineHeight = 32; // Altura de línea para leading-8
+                let isRightColumn = false;
+                
+                let currentTop = colLeft.offsetTop;
+                let currentLeft = colLeft.offsetLeft;
+                
+                scanner.style.top = currentTop + 'px';
+                scanner.style.left = currentLeft + 'px';
+                scanner.style.width = colLeft.offsetWidth + 'px';
+
+                const ppm = parseInt(document.getElementById('ex2-speed').value);
+                const msPerLine = (60000 / (ppm / 7)); // 7 palabras promedio por renglón estrecho
+
+                clearInterval(ex2Interval);
+                ex2Interval = setInterval(() => {
+                    currentTop += lineHeight;
+
+                    // Si llega al final de la columna izquierda, cambia a la derecha
+                    if (!isRightColumn && currentTop >= (colLeft.offsetTop + colLeft.offsetHeight - lineHeight)) {
+                        isRightColumn = true;
+                        currentTop = colRight.offsetTop;
+                        currentLeft = colRight.offsetLeft;
+                        scanner.style.left = currentLeft + 'px';
+                    } 
+                    // Si llega al final de la columna derecha, se detiene
+                    else if (isRightColumn && currentTop >= (colRight.offsetTop + colRight.offsetHeight - lineHeight)) {
+                        stopEx2();
+                        return;
+                    }
+                    scanner.style.top = currentTop + 'px';
+                }, msPerLine);
+
+            } else {
+                stopEx2();
+            }
+        }
+
+        function stopEx2() {
+            clearInterval(ex2Interval);
+            const btn = document.getElementById('ex2-btn');
+            btn.innerText = "Iniciar";
+            btn.classList.replace('bg-red-600', 'bg-dalpaGreen');
+            document.getElementById('scanner-box-2').classList.add('hidden');
         }
     </script>
 </body>
